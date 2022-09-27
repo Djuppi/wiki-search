@@ -18,15 +18,13 @@ export default function Home() {
       setError('Search parameter is required');
       return;
     }
-
-
     
     try {
-      const API_URL = `https://en.wikipedia.org/w/api.php?action=query&origin=*&format=json&generator=search&gsrnamespace=0&gsrlimit=5&gsrsearch=${search}&sort=relevan`;
+      const API_URL = `https://en.wikipedia.org/w/api.php?action=query&origin=*&format=json&generator=search&gsrnamespace=0&gsrlimit=5&gsrsearch=${search}&prop=info|extracts&inprop=url`;
       const articles = await fetch(`${API_URL}`);
   
       const articlesData = await articles.json();
-      console.log(articlesData)
+      console.log(articlesData.query.pages)
       const pages = articlesData.query.pages
       setArticles(pages);
     } catch(err) {
@@ -53,10 +51,12 @@ export default function Home() {
       <div className={styles.articleContainer}>
         {Object.values(articles).map(article => {
           return (
-            <div key={article.pageId} className={styles.card} >
-              <p>Article title:</p>
-              <h1>{article.title}</h1>
-            </div>
+            <a key={article.pageId}  href={article.fullurl} rel="noreferrer" target="_blank">
+              <div className={styles.card}>
+                <p>Article title:</p>
+                <h1>{article.title}</h1>
+              </div>
+            </a>
           )
         })}
       </div>
