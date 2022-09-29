@@ -1,16 +1,22 @@
-import { useEffect, useState } from 'react';
+import { useState, CSSProperties } from 'react';
+import MoonLoader from "react-spinners/MoonLoader";
 
-import styles from '../styles/Home.module.css'
+import { FiExternalLink } from 'react-icons/fi';
+
+import styles from '../styles/Home.module.css';
+
+const loadingStyle = {
+  margin: "0 auto",
+  borderColor: "red",
+};
 
 export default function Home() {
   const [search, setSearch] = useState('');
-  const [searchTime, setSearchTime] = useState(0);
   const [articles, setArticles] = useState({});
   const [error, setError] = useState('');
+  const [loading, setLoading] = useState(false);
 
-  useEffect(() => {
 
-  }, [articles, searchTime])
 
   const handleSubmit = async (e, search) => {
     e.preventDefault();
@@ -20,6 +26,7 @@ export default function Home() {
     }
     
     try {
+      setLoading(true);
       const API_URL = `https://en.wikipedia.org/w/api.php?action=query&origin=*&format=json&generator=search&gsrnamespace=0&gsrlimit=5&gsrsearch=${search}&prop=info|extracts&inprop=url`;
       const articles = await fetch(`${API_URL}`);
   
@@ -29,6 +36,9 @@ export default function Home() {
       setArticles(pages);
     } catch(err) {
       console.error(err);
+      setLoading(false);
+    } finally {
+      setLoading(false);
     }
     
 
@@ -37,7 +47,7 @@ export default function Home() {
 
   return (
     <div className={styles.container}>
-      <h1>Search for Wikipedia articles</h1>
+      <h1>Search for top 5 Wikipedia articles</h1>
       <form >
         <input className={styles.input} type="search" value={search} onChange={(e) => setSearch(e.target.value)} />
         <div className={styles.btnContainer}>
@@ -49,16 +59,20 @@ export default function Home() {
       {error && <p>{error}</p>}
 
       <div className={styles.articleContainer}>
-        {Object.values(articles).map(article => {
-          return (
-            <a key={article.pageId}  href={article.fullurl} rel="noreferrer" target="_blank">
-              <div className={styles.card}>
-                <p>Article title:</p>
-                <h1>{article.title}</h1>
-              </div>
-            </a>
-          )
-        })}
+        {loading ? 
+          <MoonLoader color='#000' loading={loading} cssOverride={loadingStyle} size={150} /> 
+          :
+          Object.values(articles).map(article => {
+            return (
+                <div className={styles.card}>
+                  <p>Article title:</p>
+                  <h1>{article.title}</h1>
+                  <a href={article.fullurl} rel="noreferrer" target="_blank">Read article <FiExternalLink /></a>
+                </div>
+            )
+          })
+        }
+        
       </div>
 
     </div>
