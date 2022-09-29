@@ -28,11 +28,12 @@ export default function Home() {
       const articles = await fetch(`${API_URL}`);
   
       const articlesData = await articles.json();
-      console.log(articlesData.query.pages)
-      const pages = articlesData.query.pages
+      
+      const { pages } = articlesData.query;
       setArticles(pages);
     } catch(err) {
       console.error(err);
+      setError("Error fetching articles. Try another word or sentence");
       setLoading(false);
     } finally {
       setLoading(false);
@@ -58,7 +59,7 @@ export default function Home() {
           :
           Object.values(articles).map(article => {
             return (
-                <div className={styles.card}>
+                <div key={article.pageid} className={styles.card}>
                   <p>Article title:</p>
                   <h1>{article.title}</h1>
                   <a href={article.fullurl} rel="noreferrer" target="_blank">Read article <FiExternalLink /></a>
