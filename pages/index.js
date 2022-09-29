@@ -1,6 +1,5 @@
-import { useState, CSSProperties } from 'react';
+import { useState } from 'react';
 import MoonLoader from "react-spinners/MoonLoader";
-
 import { FiExternalLink } from 'react-icons/fi';
 
 import styles from '../styles/Home.module.css';
@@ -15,8 +14,6 @@ export default function Home() {
   const [articles, setArticles] = useState({});
   const [error, setError] = useState('');
   const [loading, setLoading] = useState(false);
-
-
 
   const handleSubmit = async (e, search) => {
     e.preventDefault();
@@ -40,9 +37,6 @@ export default function Home() {
     } finally {
       setLoading(false);
     }
-    
-
-
   }
 
   return (
